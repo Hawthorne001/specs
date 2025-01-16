@@ -29,7 +29,7 @@ The threshold for which changes require a governance vote is based on the User P
 - Hardfork is prepared *[If needed - hardforks are needed if we are adding major/protocol-level changes to our stack]*
    - Named hardfork is created
    - Code has been configured to activate with the named hardfork
-   - Ugrades of Fault Proof systems are prepared
+   - Upgrades of Fault Proof systems are prepared
 
     ## 4. Security standards and criteria check are done
 
@@ -207,7 +207,7 @@ Note that governance proposals are *all-or-nothing:* if one aspect of the propos
 
 Format and share your governance post using the official [Standard Proposal Template](https://gov.optimism.io/t/standard-proposal-template-optimism-token-house/5443). 
 
-Use the the [Canyon](https://gov.optimism.io/t/final-upgrade-proposal-2-canyon-network-upgrade/7088) / [Delta](https://gov.optimism.io/t/final-upgrade-proposal-3-delta-network-upgrade/7310)  or [Ecotone](https://gov.optimism.io/t/upgrade-proposal-5-ecotone-network-upgrade/7669) governance posts as guides for what to say.
+Use the [Canyon](https://gov.optimism.io/t/final-upgrade-proposal-2-canyon-network-upgrade/7088) / [Delta](https://gov.optimism.io/t/final-upgrade-proposal-3-delta-network-upgrade/7310)  or [Ecotone](https://gov.optimism.io/t/upgrade-proposal-5-ecotone-network-upgrade/7669) governance posts as guides for what to say.
 
 Some useful tips for writing your governance post:
 

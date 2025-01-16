@@ -10,12 +10,14 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-This document is not finalized and should be considered experimental.
-
 ## Execution Layer
+
+- [Dynamic EIP-1559 Parameters](./exec-engine.md#dynamic-eip-1559-parameters)
 
 ## Consensus Layer
 
-- [Interop](../interop/overview.md)
+- [Holocene Derivation](./derivation.md#holocene-derivation)
 
 ## Smart Contracts
+
+- [System Config](./system-config.md)

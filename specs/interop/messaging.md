@@ -89,7 +89,7 @@ exact state of the block templates between multiple chains together.
 [log]: https://github.com/ethereum/go-ethereum/blob/5c67066a050e3924e1c663317fd8051bc8d34f43/core/types/log.go#L29
 
 Each [Log][log] (also known as `event` in solidity) forms an initiating message.
-The raw log data froms the [Message Payload](#message-payload).
+The raw log data from the [Message Payload](#message-payload).
 
 Messages are *broadcast*: the protocol does not enshrine address-targeting within messages.
 
@@ -101,8 +101,12 @@ An initiating message may be executed many times: no replay-protection is enshri
 ### Executing Messages
 
 An executing message is represented by the [ExecutingMessage event][event] that is emitted by
-the `CrossL2Inbox` predeploy. This event is coupled to a `CALL` with the payload that is emitted
-within the event, allowing introspection of the data without needing to do call tracing.
+the `CrossL2Inbox` predeploy. Contracts can introduce their own public
+entrypoints and solely trigger validation of the cross chain message with [validateMessage](./predeploys.md#validatemessage).
+
+We highly encourage the use of the [`L2toL2CrossDomainMessenger`](./predeploys.md#l2tol2crossdomainmessenger)
+over a custom messsage-executor contract.
+
 All of the information required to satisfy the invariants MUST be included in this event.
 
 [event]: ./predeploys.md#executingmessage-event
@@ -117,15 +121,16 @@ do not count as executing messages.
 
 ## Messaging Invariants
 
-- [Timestamp Invariant](#timestamp-invariant): The timestamp at the time of inclusion of the executing message MUST
-  be greater than or equal to the timestamp of the initiating message.
+- [Timestamp Invariant](#timestamp-invariant): The timestamp at the time of inclusion of the initiating message MUST
+  be less than or equal to the timestamp of the executing message as well as greater than or equal to the Interop Start Timestamp.
 - [ChainID Invariant](#chainid-invariant): The chain id of the initiating message MUST be in the dependency set
 - [Message Expiry Invariant](#message-expiry-invariant): The timestamp at the time of inclusion of the executing
   message MUST be lower than the initiating message timestamp (as defined in the [`Identifier`]) + `EXPIRY_TIME`.
 
 ### Timestamp Invariant
 
-The timestamp invariant ensures that initiating messages cannot come from a future block. Note that since
+The timestamp invariant ensures that initiating messages is at least the same timestamp as the Interop upgrade timestamp
+and cannot come from a future block than the block of its executing message. Note that since
 all transactions in a block have the same timestamp, it is possible for an executing transaction to be
 ordered before the initiating message in the same block.
 

@@ -187,10 +187,10 @@ protocol upgrades.
 
 | Parameter | Bedrock (default) value | Latest (default) value | Changes | Notes |
 | --------- | ----------------------- | ---------------------- | ------- | ----- |
-| `max_sequencer_drift` | 600 | 1800 | [Fjord](../fjord/derivation.md#constant-maximum-sequencer-drift) | Changed from a chain parameter to a constant with Fjord. |
-| `MAX_RLP_BYTES_PER_CHANNEL` | 10,000,000 | 100,000,000 | [Fjord](../fjord/derivation.md#increasing-max_rlp_bytes_per_channel-and-max_channel_bank_size) | Constant increased with Fjord. |
-| `MAX_CHANNEL_BANK_SIZE` | 100,000,000 | 1,000,000,000 | [Fjord](../fjord/derivation.md#increasing-max_rlp_bytes_per_channel-and-max_channel_bank_size) | Constant increased with Fjord. |
-| `MAX_SPAN_BATCH_ELEMENT_COUNT` | 10,000,000 | 10,000,000 | Effectively introduced in [Fjord](../fjord/derivation.md#increasing-max_rlp_bytes_per_channel-and-max_channel_bank_size)| Number of elements |
+| `max_sequencer_drift` | 600 | 1800 | [Fjord](./fjord/derivation.md#constant-maximum-sequencer-drift) | Changed from a chain parameter to a constant with Fjord. |
+| `MAX_RLP_BYTES_PER_CHANNEL` | 10,000,000 | 100,000,000 | [Fjord](./fjord/derivation.md#increasing-max_rlp_bytes_per_channel-and-max_channel_bank_size) | Constant increased with Fjord. |
+| `MAX_CHANNEL_BANK_SIZE` | 100,000,000 | 1,000,000,000 | [Fjord](./fjord/derivation.md#increasing-max_rlp_bytes_per_channel-and-max_channel_bank_size) | Constant increased with Fjord. |
+| `MAX_SPAN_BATCH_ELEMENT_COUNT` | 10,000,000 | 10,000,000 | Effectively introduced in [Fjord](./fjord/derivation.md#increasing-max_rlp_bytes_per_channel-and-max_channel_bank_size)| Number of elements |
 
 ---
 
@@ -243,16 +243,10 @@ into chunks known as [channel frames][g-channel-frame]. A single batcher transac
 (belonging to the same or to different channels).
 
 This design gives use the maximum flexibility in how we aggregate batches into channels, and split channels over batcher
-transactions. It notably allows us to maximize data utilisation in a batcher transaction: for instance it allows us to
-pack the final (small) frame of a window with large frames from the next window.
+transactions. It notably allows us to maximize data utilization in a batcher transaction: for instance it allows us to
+pack the final (small) frame of one channel with one or more frames from the next channel.
 
-In the future this channel identification feature also allows the [batcher][g-batcher] to employ multiple signers
-(private keys) to submit one or multiple channels in parallel (1).
-
-(1) This helps alleviate issues where, because of transaction nonce values affecting the L2 tx-pool and thus inclusion:
-multiple transactions made by the same signer are stuck waiting on the inclusion of a previous transaction.
-
-Also note that we use a streaming compression scheme, and we do not need to know how many blocks a channel will end up
+Also note that we use a streaming compression scheme, and we do not need to know how many batches a channel will end up
 containing when we start a channel, or even as we send the first frames in the channel.
 
 And by splitting channels across multiple data transactions, the L2 can have larger block data than the
@@ -374,15 +368,18 @@ where:
 A channel is encoded by applying a streaming compression algorithm to a list of batches:
 
 ```text
-rlp_batches = []
+encoded_batches = []
 for batch in batches:
-    rlp_batches.append(batch)
+    encoded_batches ++ batch.encode()
+rlp_batches = rlp_encode(encoded_batches)
 ```
 
 where:
 
-- `batches` is the input, a sequence of batches byte-encoded as per the next section ("Batch Encoding")
-- `rlp_batches` is the concatenation of the RLP-encoded batches
+- `batches` is the input, a sequence of batches each with a byte-encoder
+function `.encode()` as per the next section ("Batch Encoding")
+- `encoded_batches` is a byte array: the concatenation of the encoded batches
+- `rlp_batches` is the rlp encoding of the concatenated encoded batches
 
 ```text
 channel_encoding = zlib_compress(rlp_batches)
@@ -393,7 +390,7 @@ where zlib_compress is the ZLIB algorithm (as specified in [RFC-1950][rfc1950]) 
 [rfc1950]: https://www.rfc-editor.org/rfc/rfc1950.html
 
 The Fjord upgrade introduces an additional [versioned channel encoding
-format](../fjord/derivation.md#brotli-channel-compression) to support alternate compression
+format](./fjord/derivation.md#brotli-channel-compression) to support alternate compression
 algorithms.
 
 When decompressing a channel, we limit the amount of decompressed data to `MAX_RLP_BYTES_PER_CHANNEL` (defined in the
@@ -441,6 +438,11 @@ The Delta upgrade introduced an additional batch type, [span batches][span-batch
 [span-batches]: ./delta/span-batches.md
 
 Unknown versions make the batch invalid (it must be ignored by the rollup node), as do malformed contents.
+
+> **Note** if the batch version and contents can be RLP decoded correctly but extra content exists beyond the batch,
+> the additional data may be ignored during parsing. Data _between_ RLP encoded batches may not be ignored
+> (as they are seen as malformed batches), but if a batch can be fully described by the RLP decoding,
+> extra content does not invalidate the decoded batch.
 
 The `epoch_number` and the `timestamp` must also respect the constraints listed in the [Batch Queue][batch-queue]
 section, otherwise the batch is considered invalid and will be ignored.

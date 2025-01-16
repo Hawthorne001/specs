@@ -489,7 +489,7 @@ then made available using [batcher transactions][batcher-transaction].
 
 A batcher transaction is a transaction submitted by a [batcher] to a data availability provider, in order to make
 channels available. These transactions carry one or more full frames, which may belong to different channels. A
-channel's frame may be split between multiple batcher transactions.
+channel's frames may be split between multiple batcher transactions.
 
 When submitted to Ethereum calldata, the batcher transaction's receiver must be the sequencer inbox address. The
 transaction must also be signed by a recognized batch submitter account. The recognized batch submitter account
@@ -717,7 +717,7 @@ derivation then acts as a sanity check and a way to detect L1 chain [re-orgs][re
 
 In validator mode, the rollup node performs derivation as indicated above, but is also able to "run ahead" of the L1
 chain by getting blocks directly from the sequencer, in which case derivation serves to validate the sequencer's
-behaviour.
+behavior.
 
 A rollup node running in validator mode is sometimes called _a replica_.
 

@@ -37,9 +37,9 @@ Predeploys are used instead of precompiles to make it easier for multiclient
 implementations as well as allowing for more integration with hardhat/foundry
 network forking.
 
-Predeploy addresses exist in 1 byte namespace `0x42000000000000000000000000000000000000xx`.
-Proxies are set at each possible predeploy address except for the
-`GovernanceToken` and the `ProxyAdmin`.
+Predeploy addresses exist in a prefixed namespace `0x4200000000000000000000000000000000000xxx`.
+Proxies are set at the first 2048 addresses in the namespace, except for the addresses reserved for the
+`GovernanceToken` and `WETH` predeploys.
 
 The `LegacyERC20ETH` predeploy lives at a special address `0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000`
 and there is no proxy deployed at that account.
@@ -145,7 +145,7 @@ This contract is deprecated and its usage should be avoided.
 
 ## WETH9
 
-[Implementation](https://github.com/ethereum-optimism/optimism/blob/develop/packages/contracts-bedrock/src/vendor/WETH9.sol)
+[Implementation](https://github.com/ethereum-optimism/optimism/blob/2b1c99b39744579cc226077d356ae9e5f162db4a/packages/contracts-bedrock/src/vendor/WETH9.sol)
 
 Address: `0x4200000000000000000000000000000000000006`
 
@@ -294,7 +294,7 @@ upgraded by changing its proxy's implementation key.
 Address: `0x4200000000000000000000000000000000000012`
 
 The `OptimismMintableERC20Factory` is responsible for creating ERC20 contracts on L2 that can be
-used for depositing native L1 tokens into. These ERC20 contracts can be created permisionlessly
+used for depositing native L1 tokens into. These ERC20 contracts can be created permissionlessly
 and implement the interface required by the `StandardBridge` to just work with deposits and withdrawals.
 
 Each ERC20 contract that is created by the `OptimismMintableERC20Factory` allows for the `L2StandardBridge` to mint

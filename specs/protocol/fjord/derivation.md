@@ -66,7 +66,7 @@ The rules around the activation time are deliberately being kept simple, so no o
 be applied other than to change the parameter to a constant. The first Fjord block would in theory
 accept older L1-origin timestamps than its predecessor. However, since the L1 origin timestamp must
 also increase, the only noteworthy scenario that can happen is that the first few Fjord blocks will
-be in the same epoch as the the last pre-Fjord blocks, even if these blocks would not be allowed to
+be in the same epoch as the last pre-Fjord blocks, even if these blocks would not be allowed to
 have these L1-origin timestamps according to pre-Fjord rules. So the same L1 timestamp would be
 shared within a pre- and post-Fjord mixed epoch. This is considered a feature and is not considered
 a security issue.
@@ -76,8 +76,8 @@ a security issue.
 With Fjord, `MAX_RLP_BYTES_PER_CHANNEL` will be increased from 10,000,000 bytes to 100,000,000 bytes,
 and `MAX_CHANNEL_BANK_SIZE` will be increased from 100,000,000 bytes to 1,000,000,000 bytes.
 
-The usage of `MAX_RLP_BYTES_PER_CHANNEL` is defined in [Channel Format](../protocol/derivation.md#channel-format).
-The usage of `MAX_CHANNEL_BANK_SIZE` is defined in [Channel Bank Pruning](../protocol/derivation.md#pruning).
+The usage of `MAX_RLP_BYTES_PER_CHANNEL` is defined in [Channel Format](../derivation.md#channel-format).
+The usage of `MAX_CHANNEL_BANK_SIZE` is defined in [Channel Bank Pruning](../derivation.md#pruning).
 
 Span Batches previously had a limit `MAX_SPAN_BATCH_SIZE` which was equal to `MAX_RLP_BYTES_PER_CHANNEL`.
 Fjord creates a new constant `MAX_SPAN_BATCH_ELEMENT_COUNT` for the element count limit & removes
@@ -125,14 +125,14 @@ prior to this change which would cause the Fault Proof Program to consume a very
 
 # Brotli Channel Compression
 
-[legacy-channel-format]: ../protocol/derivation.md#channel-format
+[legacy-channel-format]: ../derivation.md#channel-format
 
 Fjord introduces a new versioned channel encoding format to support alternate compression
 algorithms, with the [legacy channel format][legacy-channel-format] remaining supported. The
 versioned format is as follows:
 
 ```text
-channel_encoding = `channel_version_byte ++ compress(rlp_batches)`
+channel_encoding = channel_version_byte ++ compress(rlp_batches)
 ```
 
 The `channel_version_byte` must never have its 4 lower order bits set to `0b1000 = 8` or `0b1111 =
@@ -171,7 +171,7 @@ To perform this upgrade, a deposit transaction is derived with the following att
 - `mint`: `0`
 - `value`: `0`
 - `gasLimit`: `1,450,000`
-- `data`: `0x60806040523...` ([full bytecode](../static/bytecode/fjord-gas-price-oracle-deployment.txt))
+- `data`: `0x60806040523...` ([full bytecode](../../static/bytecode/fjord-gas-price-oracle-deployment.txt))
 - `sourceHash`: `0x86122c533fdcb89b16d8713174625e44578a89751d96c098ec19ab40a51a8ea3`
   computed with the "Upgrade-deposited" type, with `intent = "Fjord: Gas Price Oracle Deployment"
 
